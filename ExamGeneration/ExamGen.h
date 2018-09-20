@@ -28,8 +28,8 @@ typedef struct GenNode
 								//是的话该值为true，nodeSymbol不能为sym_multiply或sym_divide；
 								//否则值为false，nodeSymbol取值不限。
 
-	Symbol nodeSymbol;			//表面当前二叉树节点的运算符号类型
-	ValueType value;			//表面当前二叉树节点的运算值，若为表达式，则值为0
+	Symbol nodeSymbol;			//表示当前二叉树节点的运算符号类型
+	ValueType value;			//表示当前二叉树节点的运算值，若为表达式，则值为0
 
 	pGenNode nextElem;			//指向下一个运算数值节点的指针，若为NULL则说明已至当前表达式的末尾
 	pGenNode expressionHead;	//指向下一个运算表达式节点的指针，若为NULL则说明当前节点为数值节点
