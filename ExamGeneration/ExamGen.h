@@ -3,6 +3,8 @@
 #define EXAMGEN_H
 
 #include<iostream>
+#include<random>
+#include<string>
 using namespace std;
 
 typedef unsigned int ValueType;	//ValueType定义，可用于快速修改值的变量类型
@@ -31,8 +33,8 @@ typedef struct GenNode
 	Symbol nodeSymbol;			//表示当前二叉树节点的运算符号类型
 	ValueType value;			//表示当前二叉树节点的运算值，若为表达式，则值为0
 
-	pGenNode nextElem;			//指向下一个运算数值节点的指针，若为NULL则说明已至当前表达式的末尾
-	pGenNode expressionHead;	//指向下一个运算表达式节点的指针，若为NULL则说明当前节点为数值节点
+	GenNode *nextElem;			//指向下一个运算数值节点的指针，若为NULL则说明已至当前表达式的末尾
+	GenNode *expressionHead;	//指向下一个运算表达式节点的指针，若为NULL则说明当前节点为数值节点
 }GenNode, *pGenNode;
 
 typedef enum
@@ -67,8 +69,11 @@ public:
 		pGenNode	IN_expressionHead		//当前表达式中代写入的下一个子表达式节点指针
 	);		//设置pNode指向的结构体的值,函数成功则返回en_success;pNode值为空则输出错误信息，返回en_nullptr
 	Status CreateBiTree(pGenNode &pFather, int times);	//以pFather为头节点，递归生成试题二叉树，传参times为递归次数
-	
+	Status DeleteBiTree(pGenNode &pFather);	//递归释放二叉树节点空间
+	void BiTreeInfoIntoString(pGenNode pFather, string &dst);	//将试题的信息输入至dst对应字符串中
 
+	char SymbolToChar(Symbol IN_symbol);	//根据传入的IN_symbol输出对应符号的ASCII
+	void ShowTree(pGenNode pFather);		//递归输出试题树的信息
 	void ClassWork();						//功能执行主函数
 
 

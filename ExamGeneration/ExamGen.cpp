@@ -14,7 +14,7 @@ Status clExamGen::GetRandom(ValueType &Data, ValueType IN_Minima, ValueType IN_M
 
 Status clExamGen::SetLevel(Level IN_level)		//根据传入的IN_level设置类内参数lvMode、maxNumOfElem、numOfExpression、maxiumOfValue
 {
-	switch (lvMode)
+	switch (IN_level)
 	{
 	case lv_easy:	//小学生模式，此难度下四则运算数值仅为个位数，且无括号，表达式内运算数值个数为[maxNumOfElem-2,maxNumOfElem)个
 	{
@@ -105,7 +105,7 @@ Status clExamGen::CreateBiTree(pGenNode &pFather, int times)	//以pFather为表�
 		return en_nullptr;
 	}
 
-	int i;
+	unsigned int i;
 	pGenNode pNode;								//存储当前操作的节点地址
 	pGenNode pLast;								//存储上一个操作的节点地址
 	bool nodeIsElem;							//存储当前节点的随机元素标识
@@ -113,6 +113,7 @@ Status clExamGen::CreateBiTree(pGenNode &pFather, int times)	//以pFather为表�
 	ValueType nodeValue;						//存储当前节点的随机运算数值
 	unsigned int numOfElem = maxNumOfElem - 2 + rand() % 2;	//存储当前表达式链表中的节点数
 	
+	pNode = NULL;
 	pLast = NULL;
 
 	for (i = 0; i < numOfElem; ++i)
@@ -169,6 +170,124 @@ Status clExamGen::CreateBiTree(pGenNode &pFather, int times)	//以pFather为表�
 	}
 	pFather->expressionHead = pNode;	//将pFather对应节点的子表达式指针指向pNode，至此pFather的子试题树生成完毕
 	pFather->expressionHead->nodeSymbol = sym_plus;	//将子表达式中头节点符号置为加号
+	pFather->expressionHead->isExpressionHead = true;	//将子表达式中头节点的头节点标识isExpressionHead置为true
 
 	return en_success;
+}
+
+Status clExamGen::DeleteBiTree(pGenNode &pFather)		//递归释放二叉树节点空间
+{
+	if (pFather->expressionHead)
+	{
+		DeleteBiTree(pFather->expressionHead);
+	}
+	if (pFather->nextElem)
+	{
+		DeleteBiTree(pFather->nextElem);
+	}
+	free(pFather);
+	pFather = NULL;
+	return en_success;
+}
+
+void clExamGen::ShowTree(pGenNode pFather)		//递归输出试题树的信息
+{
+	if (!pFather)
+	{
+		return;
+	}
+
+	//运算符号显示环节
+	if (pFather->isExpressionHead == false)	//非表达式的头节点则显示运算符号
+	{
+		cout << ' ' << SymbolToChar(pFather->nodeSymbol);	//将当前节点的运算符号枚举值转换为ASCII值，存储至ch_symbol中
+	}
+
+	//运算数值或表达式输出环节
+	if (pFather->isElem == false)	//节点为表达式节点则显示“ ( 表达式 )”
+	{
+		cout << ' ' << '(';
+		ShowTree(pFather->expressionHead);
+		cout << ' ' << ')';
+	}
+	else	//节点为数值节点时显示运算数值
+	{
+		cout << ' ' << pFather->value;
+	}
+	ShowTree(pFather->nextElem);
+}
+
+
+char clExamGen::SymbolToChar(Symbol IN_symbol)	//根据传入的IN_symbol输出对应符号的ASCII
+{
+	switch (IN_symbol)
+	{
+		case sym_plus:
+		{
+			return '+';
+		}break;
+		case sym_minus:
+		{
+			return '-';
+		}break;
+		case sym_multiply:
+		{
+			return '*';
+		}break;
+		case sym_divide:
+		{
+			return '/';
+		}break;
+		default:
+		{
+			return '\0';
+		}
+	}
+}
+
+void clExamGen::BiTreeInfoIntoString(pGenNode pFather, string &dst)	//将试题的信息输入至dst对应字符串中
+{
+	if (!pFather)
+	{
+		return;
+	}
+
+	//运算符号显示环节
+	if (pFather->isExpressionHead == false)	//非表达式的头节点则显示运算符号
+	{
+		dst.insert(dst.size(), 1, ' ');
+		dst.insert(dst.size(), 1, SymbolToChar(pFather->nodeSymbol));
+	}
+
+	//运算数值或表达式输出环节
+	if (pFather->isElem == false)	//节点为表达式节点则显示“ ( 表达式 )”
+	{
+		dst.insert(dst.size(), " (");
+		BiTreeInfoIntoString(pFather->expressionHead, dst);
+		dst.insert(dst.size(), " )");
+	}
+	else	//节点为数值节点时显示运算数值
+	{
+		dst.insert(dst.size(), 1, ' ');
+		dst.insert(dst.size(),to_string(pFather->value));
+	}
+	BiTreeInfoIntoString(pFather->nextElem, dst);
+}
+
+void clExamGen::ClassWork()						//功能执行主函数
+{
+	random_device rd;
+	srand(rd());
+	SetLevel(lv_normal);		//设置难度等级
+	GetNode(genNodeRoot);	//申请根节点空间
+	SetNode(genNodeRoot, false, true, sym_plus, 0, NULL, NULL);	//根节点设置为符号为+的表达式节点
+	CreateBiTree(genNodeRoot, numOfExpression);	//以genNodeRoot为根节点生成试题树
+
+	cout << "Lv: " << lvMode << endl;
+	//ShowTree(genNodeRoot->expressionHead);
+	BiTreeInfoIntoString(genNodeRoot->expressionHead, strExam);
+	cout << strExam.c_str() << endl;
+
+	DeleteBiTree(genNodeRoot);	//试题树摧毁结束
+
 }
