@@ -16,10 +16,10 @@ typedef enum
 }Status;	//Status状态变量定义，用于表明运行状态，常作为函数返回值。
 typedef enum 
 { 
-	sym_plus = '+', 
-	sym_minus = '-', 
-	sym_multiply = '*', 
-	sym_divide = '/' 
+	sym_plus = 0, 
+	sym_minus = 1, 
+	sym_multiply = 2, 
+	sym_divide = 3 
 }Symbol;	//Symbol枚举变量定义，用于表明运算符号类型。
 typedef struct GenNode
 {
@@ -33,13 +33,14 @@ typedef struct GenNode
 
 	pGenNode nextElem;			//指向下一个运算数值节点的指针，若为NULL则说明已至当前表达式的末尾
 	pGenNode expressionHead;	//指向下一个运算表达式节点的指针，若为NULL则说明当前节点为数值节点
-}GenNode,*pGenNode;
+}GenNode, *pGenNode;
+
 typedef enum
 {
-	lv_easy = 0,		//小学生模式，此难度下四则运算数值仅为1位数，且无括号，表达式内运算数值个数不超过3个
-	lv_normal = 1,		//中学生模式，此难度下题目四则运算数值有2位数，有一层括号嵌套，表达式内运算数值或子表达式个数不超过3个
-	lv_hard = 2,		//大学生模式，此难度下题目四则运算数值有3位数，有两层括号嵌套，表达式内运算数值或子表达式个数不超过3个
-	lv_Hardcore = 3		//硬核模式，此难度下题目四则运算数值有4位数，有三层括号嵌套，表达式内运算数值或子表达式个数不超过4个
+	lv_easy = 0,		//小学生模式，此难度下四则运算数值仅为个位数，且无括号，表达式内运算数值个数为3-4个
+	lv_normal = 1,		//中学生模式，此难度下题目四则运算数值有十位数，至多有一层括号嵌套，表达式内运算数值或子表达式个数为2-3个
+	lv_hard = 2,		//大学生模式，此难度下题目四则运算数值有百位数，至多有两层括号嵌套，表达式内运算数值或子表达式个数为2-3个
+	lv_Hardcore = 3		//硬核模式，此难度下题目四则运算数值有千位数，至多有三层括号嵌套，表达式内运算数值或子表达式个数位3-4个
 }Level;		//Level枚举变量定义，表明生成题目的难度。
 
 
@@ -53,6 +54,7 @@ public:
 	pGenNode genNodeRoot;					//题目二叉树头节点
 	ValueType maxiumOfValue;				//生成数值的最大值
 
+	Status GetRandom(ValueType &Data, ValueType IN_Minima, ValueType IN_Maxima);	//获取[Minima,Maxima)的随机数,将该数传给Data
 	Status SetLevel(Level IN_level);		//根据传入的IN_level设置类内参数lvMode、maxNumOfElem、numOfExpression、maxiumOfValue
 	Status GetNode(pGenNode &pNode);		//动态申请GenNode大小的内存，成功则将该内存地址返回给pNode并返回en_success;否则输出错误信息并返回en_fail
 	Status SetNode(
@@ -64,10 +66,10 @@ public:
 		pGenNode	IN_nextElem,			//当前表达式中代写入的下一个数值节点指针
 		pGenNode	IN_expressionHead		//当前表达式中代写入的下一个子表达式节点指针
 	);		//设置pNode指向的结构体的值,函数成功则返回en_success;pNode值为空则输出错误信息，返回en_nullptr
-
+	Status CreateBiTree(pGenNode &pFather, int times);	//以pFather为头节点，递归生成试题二叉树，传参times为递归次数
 	
 
-	void workMain();						//功能执行主函数
+	void ClassWork();						//功能执行主函数
 
 
 
