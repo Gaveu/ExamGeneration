@@ -39,10 +39,11 @@ typedef struct GenNode
 
 typedef enum
 {
-	lv_easy = 0,		//小学生模式，此难度下四则运算数值仅为个位数，且无括号，表达式内运算数值个数为3-4个
-	lv_normal = 1,		//中学生模式，此难度下题目四则运算数值有十位数，至多有一层括号嵌套，表达式内运算数值或子表达式个数为2-3个
-	lv_hard = 2,		//大学生模式，此难度下题目四则运算数值有百位数，至多有两层括号嵌套，表达式内运算数值或子表达式个数为2-3个
-	lv_Hardcore = 3		//硬核模式，此难度下题目四则运算数值有千位数，至多有三层括号嵌套，表达式内运算数值或子表达式个数位3-4个
+	lv_easy = 0,		//小学生模式，此难度下四则运算数值仅为个位数，且无括号，表达式内运算数值个数为4个
+	lv_normal = 1,		//中学生模式，此难度下题目四则运算数值有十位数，至多有一层括号嵌套，表达式内运算数值或子表达式个数为3个
+	lv_hard = 2,		//大学生模式，此难度下题目四则运算数值有百位数，至多有两层括号嵌套，表达式内运算数值或子表达式个数为3个
+	lv_Hardcore = 3,	//硬核模式，此难度下题目四则运算数值有千位数，至多有三层括号嵌套，表达式内运算数值或子表达式个数位4个
+	lv_UserDefine = 4	//自定义模式,此难度下题目四则运算数值、括号层数、运算数值或子表达式可自定义。
 }Level;		//Level枚举变量定义，表明生成题目的难度。
 
 
@@ -56,6 +57,7 @@ public:
 	pGenNode genNodeRoot;					//题目二叉树头节点
 	ValueType maxiumOfValue;				//生成数值的最大值
 
+	char SymbolToChar(Symbol IN_symbol);	//根据传入的IN_symbol输出对应符号的ASCII
 	Status GetRandom(ValueType &Data, ValueType IN_Minima, ValueType IN_Maxima);	//获取[Minima,Maxima)的随机数,将该数传给Data
 	Status SetLevel(Level IN_level);		//根据传入的IN_level设置类内参数lvMode、maxNumOfElem、numOfExpression、maxiumOfValue
 	Status GetNode(pGenNode &pNode);		//动态申请GenNode大小的内存，成功则将该内存地址返回给pNode并返回en_success;否则输出错误信息并返回en_fail
@@ -70,11 +72,16 @@ public:
 	);		//设置pNode指向的结构体的值,函数成功则返回en_success;pNode值为空则输出错误信息，返回en_nullptr
 	Status CreateBiTree(pGenNode &pFather, int times);	//以pFather为头节点，递归生成试题二叉树，传参times为递归次数
 	Status DeleteBiTree(pGenNode &pFather);	//递归释放二叉树节点空间
-	void BiTreeInfoIntoString(pGenNode pFather, string &dst);	//将试题的信息输入至dst对应字符串中
+	Status CreateExamToString(Level IN_lvmode, string &Out_dst);	//根据传入的试题难度自动生成试题，并将试题字符串化，复制到Out_dst的string引用对象中
+	Status CreateExamToString(
+		Level IN_lvmode,
+		ValueType IN_maxiumOfValue,
+		unsigned int IN_numOfElem,
+		unsigned int IN_numOfExpression,
+		string &Out_dst);	//(用户自定义难度)根据传入的试题参数自动生成试题，并将试题字符串化，复制到Out_dst的string引用对象中
 
-	char SymbolToChar(Symbol IN_symbol);	//根据传入的IN_symbol输出对应符号的ASCII
+	void BiTreeInfoIntoString(pGenNode pFather, string &dst);	//将试题的信息输入至dst对应字符串中
 	void ShowTree(pGenNode pFather);		//递归输出试题树的信息
-	void ClassWork();						//功能执行主函数
 
 
 

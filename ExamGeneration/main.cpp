@@ -6,13 +6,13 @@ int main()
 	cl.ClassWork();*/
 
 
-	clExamGen *p;
+	clExamGen *p = new clExamGen();
+	string s;
 
-	for (int i = 0; i < 50; ++i)
+	for (int i = 0; i < 10; ++i)
 	{
-		p = new clExamGen();
-		p->ClassWork();
-		delete(p);
+		p->CreateExamToString(lv_Hardcore,s);
+		cout << s.c_str() << endl;
 	}
 	
 

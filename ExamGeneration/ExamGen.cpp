@@ -16,32 +16,39 @@ Status clExamGen::SetLevel(Level IN_level)		//根据传入的IN_level设置类�
 {
 	switch (IN_level)
 	{
-	case lv_easy:	//小学生模式，此难度下四则运算数值仅为个位数，且无括号，表达式内运算数值个数为[maxNumOfElem-2,maxNumOfElem)个
+	case lv_easy:	//小学生模式，此难度下四则运算数值仅为个位数，且无括号，表达式内运算数值个数为4个
 	{
 		maxiumOfValue = 10;
-		maxNumOfElem = 4;		//表达式内运算数值或子表达式个数为2-3个
+		maxNumOfElem = 4;		//表达式内运算数值或子表达式个数为4个
 		numOfExpression = 0;
 	}break;
 
-	case lv_normal:	//中学生模式，此难度下题目四则运算数值有十位数，至多有一层括号嵌套，表达式内运算数值或子表达式个数为[maxNumOfElem-2,maxNumOfElem)个
+	case lv_normal:	//中学生模式，此难度下题目四则运算数值有十位数，至多有一层括号嵌套，表达式内运算数值或子表达式个数为3个
 	{
 		maxiumOfValue = 100;
-		maxNumOfElem = 4;		//表达式内运算数值或子表达式个数为2-3个
+		maxNumOfElem = 3;		//表达式内运算数值或子表达式个数为3个
 		numOfExpression = 1;
 	}break;
 
-	case lv_hard:	//大学生模式，此难度下题目四则运算数值有百位数，至多有两层括号嵌套，表达式内运算数值或子表达式个数为[maxNumOfElem-2,maxNumOfElem)个
+	case lv_hard:	//大学生模式，此难度下题目四则运算数值有百位数，至多有两层括号嵌套，表达式内运算数值或子表达式个数为3个
 	{
 		maxiumOfValue = 1000;
-		maxNumOfElem = 4;		//表达式内运算数值或子表达式个数为2-3个
+		maxNumOfElem = 3;		//表达式内运算数值或子表达式个数为3个
 		numOfExpression = 2;
 	}break;
 
-	case lv_Hardcore:	//硬核模式，此难度下题目四则运算数值有千位数，至多有三层括号嵌套，表达式内运算数值或子表达式个数为[maxNumOfElem-2,maxNumOfElem)个
+	case lv_Hardcore:	//硬核模式，此难度下题目四则运算数值有千位数，至多有三层括号嵌套，表达式内运算数值或子表达式个数为4个
 	{
 		maxiumOfValue = 10000;
-		maxNumOfElem = 5;		//表达式内运算数值或子表达式个数为3-4个
+		maxNumOfElem = 4;		//表达式内运算数值或子表达式个数为4个
 		numOfExpression = 3;
+	}break;
+
+	case lv_UserDefine:	//用户自定义模式，由于正常执行用户自定义模式的流程时并不会触发该函数，运行到这里可认为是误操作，输出错误信息并结束该函数的执行
+	{
+		cout << "SetLevel:Input Error!"<<endl;
+		cout << "If you want to using UserDefine mode ,please running the other same name function!" << endl;
+		return en_fail;
 	}break;
 
 	default:
@@ -111,7 +118,7 @@ Status clExamGen::CreateBiTree(pGenNode &pFather, int times)	//以pFather为表�
 	bool nodeIsElem;							//存储当前节点的随机元素标识
 	Symbol nodeSymbol;							//存储当前节点的随机符号枚举变量
 	ValueType nodeValue;						//存储当前节点的随机运算数值
-	unsigned int numOfElem = maxNumOfElem - 2 + rand() % 2;	//存储当前表达式链表中的节点数
+	unsigned int numOfElem = maxNumOfElem;		//存储当前表达式链表中的节点数
 	
 	pNode = NULL;
 	pLast = NULL;
@@ -274,20 +281,64 @@ void clExamGen::BiTreeInfoIntoString(pGenNode pFather, string &dst)	//将试题�
 	BiTreeInfoIntoString(pFather->nextElem, dst);
 }
 
-void clExamGen::ClassWork()						//功能执行主函数
+Status clExamGen::CreateExamToString(Level IN_lvmode, string &Out_dst)	//根据传入的试题难度自动生成试题，并将试题字符串化，复制到Out_dst的string引用对象中
 {
+	if (IN_lvmode < 0 || IN_lvmode > 4)
+	{
+		cout << "CreateExamToString:Input is illegal!" << endl;
+		return en_fail;
+	}
 	random_device rd;
 	srand(rd());
-	SetLevel(lv_normal);		//设置难度等级
+	if (en_success != SetLevel(IN_lvmode))	//设置难度等级
+	{
+		cout << "SetLevel failed!" << endl;
+		return en_false;
+	}		
+
 	GetNode(genNodeRoot);	//申请根节点空间
 	SetNode(genNodeRoot, false, true, sym_plus, 0, NULL, NULL);	//根节点设置为符号为+的表达式节点
 	CreateBiTree(genNodeRoot, numOfExpression);	//以genNodeRoot为根节点生成试题树
 
-	cout << "Lv: " << lvMode << endl;
-	//ShowTree(genNodeRoot->expressionHead);
+	//cout << "Lv: " << lvMode << endl;
 	BiTreeInfoIntoString(genNodeRoot->expressionHead, strExam);
-	cout << strExam.c_str() << endl;
-
+	Out_dst = strExam;
+	//cout << Out_dst.c_str() << endl;
 	DeleteBiTree(genNodeRoot);	//试题树摧毁结束
+	strExam.erase();
+}
 
+Status clExamGen::CreateExamToString(	
+		Level IN_lvmode,
+		ValueType IN_maxiumOfValue,
+		unsigned int IN_numOfElem,
+		unsigned int IN_numOfExpression, 
+		string &Out_dst)	//(用户自定义难度)根据传入的试题参数自动生成试题，并将试题字符串化，复制到Out_dst的string引用对象中
+{
+	if (IN_lvmode != lv_UserDefine || IN_maxiumOfValue < 0 || IN_numOfElem < 0 || IN_numOfExpression < 0)
+	{
+		cout << "CreateExamToString:Input is illegal!" << endl;
+		return en_fail;
+	}
+	random_device rd;
+	srand(rd());
+
+	//SetLevel(IN_lvmode);		//设置难度等级
+
+
+	//自定义难度下试题参数配置
+	maxiumOfValue = IN_maxiumOfValue;
+	maxNumOfElem = IN_numOfElem;		
+	numOfExpression = IN_numOfExpression;
+
+	GetNode(genNodeRoot);	//申请根节点空间
+	SetNode(genNodeRoot, false, true, sym_plus, 0, NULL, NULL);	//根节点设置为符号为+的表达式节点
+	CreateBiTree(genNodeRoot, numOfExpression);	//以genNodeRoot为根节点生成试题树
+
+	//cout << "Lv: " << lvMode << endl;
+	BiTreeInfoIntoString(genNodeRoot->expressionHead, strExam);
+	Out_dst = strExam;
+	//cout << Out_dst.c_str() << endl;
+	DeleteBiTree(genNodeRoot);	//试题树摧毁结束
+	strExam.erase();
 }
