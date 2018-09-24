@@ -224,7 +224,6 @@ void clExamGen::ShowTree(pGenNode pFather)		//递归输出试题树的信息
 	ShowTree(pFather->nextElem);
 }
 
-
 char clExamGen::SymbolToChar(Symbol IN_symbol)	//根据传入的IN_symbol输出对应符号的ASCII
 {
 	switch (IN_symbol)
@@ -309,11 +308,12 @@ Status clExamGen::CreateExamToString(Level IN_lvmode, string &Out_dst)	//根据�
 }
 
 Status clExamGen::CreateExamToString(	
-		Level IN_lvmode,
-		ValueType IN_maxiumOfValue,
-		unsigned int IN_numOfElem,
-		unsigned int IN_numOfExpression, 
-		string &Out_dst)	//(用户自定义难度)根据传入的试题参数自动生成试题，并将试题字符串化，复制到Out_dst的string引用对象中
+		Level IN_lvmode,					//传入的题目生成难度，仅接受自定义难度，其他难度则报错并返回en_fail
+		string &Out_dst,					//输出的string类引用，当函数成功生成一道题目时会将其字符串化并输出至该引用对应的对象		
+		ValueType IN_maxiumOfValue,			//待生成题目的数值最大值，题目生成参数，若为50,则运算数值范围为[1,50)
+		unsigned int IN_numOfElem,			//待生成题目中一个表达式中运算值及子表达式的最大个数
+		unsigned int IN_numOfExpression		//待生成题目中的括号嵌套层数
+)	//(用户自定义难度)根据传入的试题参数自动生成试题，并将试题字符串化，复制到Out_dst的string引用对象中
 {
 	if (IN_lvmode != lv_UserDefine || IN_maxiumOfValue < 0 || IN_numOfElem < 0 || IN_numOfExpression < 0)
 	{
@@ -326,7 +326,7 @@ Status clExamGen::CreateExamToString(
 	//SetLevel(IN_lvmode);		//设置难度等级
 
 
-	//自定义难度下试题参数配置
+	//自定义难度下试题类的参数配置
 	maxiumOfValue = IN_maxiumOfValue;
 	maxNumOfElem = IN_numOfElem;		
 	numOfExpression = IN_numOfExpression;

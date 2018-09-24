@@ -74,11 +74,12 @@ public:
 	Status DeleteBiTree(pGenNode &pFather);	//递归释放二叉树节点空间
 	Status CreateExamToString(Level IN_lvmode, string &Out_dst);	//根据传入的试题难度自动生成试题，并将试题字符串化，复制到Out_dst的string引用对象中
 	Status CreateExamToString(
-		Level IN_lvmode,
-		ValueType IN_maxiumOfValue,
-		unsigned int IN_numOfElem,
-		unsigned int IN_numOfExpression,
-		string &Out_dst);	//(用户自定义难度)根据传入的试题参数自动生成试题，并将试题字符串化，复制到Out_dst的string引用对象中
+		Level IN_lvmode,						//传入的题目生成难度，仅接受自定义难度，其他难度则报错并返回en_fail
+		string &Out_dst,						//输出的string类引用，当函数成功生成一道题目时会将其字符串化并输出至该引用对应的对象				
+		ValueType IN_maxiumOfValue,				//待生成题目的数值最大值，题目生成参数，若为50,则运算数值范围为[1,50)
+		unsigned int IN_numOfElem,				//待生成题目中一个表达式中运算值及子表达式的最大个数
+		unsigned int IN_numOfExpression			//待生成题目中的括号嵌套层数
+);	//(用户自定义难度)根据传入的试题参数自动生成试题，并将试题字符串化，复制到Out_dst的string引用对象中,返回值为Status状态枚举值
 
 	void BiTreeInfoIntoString(pGenNode pFather, string &dst);	//将试题的信息输入至dst对应字符串中
 	void ShowTree(pGenNode pFather);		//递归输出试题树的信息
