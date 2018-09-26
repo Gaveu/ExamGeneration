@@ -15,7 +15,7 @@ int main()
 
 	//此处演示十个选定了难度(lv_normal)的题目
 	Level lv = lv_normal;
-	for (int i = 0; i < 10; ++i)
+	/*for (int i = 0; i < 20; ++i)
 	{
 		//根据选定的难度lv,随机生成一道四则运算题目并将其字符串化，输出到string类的实例s中。
 		//此处函数调用示例不支持自定义模式(lv_UserDefine),要调用自定义模式的话可以看下个演示
@@ -23,21 +23,24 @@ int main()
 		cout << s.c_str() << endl;
 	}
 	cout <<"---------------------------------------"<< endl;
-
+	*/
+	
 	//此处演示十个自定义难度的题目
 	lv = lv_UserDefine;
-	for (int i = 0; i < 10; ++i)	
+	for (int i = 0; i < 30; ++i)	
 	{
-		/*
-		Status CreateExamToString(
-			Level IN_lvmode,						//传入的题目生成难度，仅接受自定义难度，其他难度则报错并返回en_fail
-			string &Out_dst,						//输出的string类引用，当函数成功生成一道题目时会将其字符串化并输出至该引用对应的对象				
-			ValueType IN_maxiumOfValue,				//待生成题目的数值最大值，题目生成参数，若为50,则运算数值范围为[1,50)
-			unsigned int IN_numOfElem,				//待生成题目中一个表达式中运算值及子表达式的最大个数
-			unsigned int IN_numOfExpression			//待生成题目中的括号嵌套层数
-		);	//(用户自定义难度)根据传入的试题参数自动生成试题，并将试题字符串化，复制到Out_dst的string引用对象中
-		*/
-		p->CreateExamToString(lv_UserDefine, s, 50, 5, 0);
+		
+		//Status CreateExamToString(
+			//Level IN_lvmode,							//传入的题目生成难度，仅接受自定义难度，其他难度则报错并返回en_fail
+			//string &Out_dst,							//输出的string类引用，当函数成功生成一道题目时会将其字符串化并输出至该引用对应的对象				
+			//ValueType IN_maxiumOfValue,				//待生成题目的数值最大值，题目生成参数，若为50,则运算数值范围为[1,50)
+			//ValueType IN_maxiumOfMolecular,			//待生成题目的真分数分子最大值
+			//ValueType IN_maxiumOfDenominator,			//待生成题目的真分数分母最大值
+			//unsigned int IN_numOfElem,				//待生成题目中一个表达式中运算值及子表达式的最大个数
+			//unsigned int IN_numOfExpression			//待生成题目中的括号嵌套层数
+		//);	//(用户自定义难度)根据传入的试题参数自动生成试题，并将试题字符串化，复制到Out_dst的string引用对象中
+		
+		p->CreateExamToString(lv_UserDefine, s, 10, 6, 7, 5, 1);
 		cout << s.c_str() << endl;
 	}
 	cout << "---------------------------------------" << endl;

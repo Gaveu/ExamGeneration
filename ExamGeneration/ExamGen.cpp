@@ -2,12 +2,12 @@
 
 Status clExamGen::GetRandom(ValueType &Data, ValueType IN_Minima, ValueType IN_Maxima)	//获取取值区间为[Minima,Maxima)的随机数,将该数传给Data
 {
-	if (IN_Maxima <= IN_Minima)		//取值区间不符合[Minima,Maxima)的输入都进行判错处理
+	if (IN_Maxima < IN_Minima)		//取值区间不符合[Minima,Maxima)的输入都进行判错处理
 	{
 		cout << "GetRandom:Input is illegal.Get the Random failed!" << endl;
 		return en_fail;
 	}
-	Data = (rand() % (IN_Maxima - IN_Minima)) + IN_Minima;	//Data赋值为[Minima,Maxima)内的一个随机数
+	Data = (rand() % (IN_Maxima - IN_Minima + 1)) + IN_Minima;	//Data赋值为[Minima,Maxima)内的一个随机数
 	return en_success;
 
 }
@@ -99,6 +99,42 @@ Status clExamGen::SetNode(				//设置pNode指向的结构体的值,函数成功
 	return en_success;
 }
 
+Status clExamGen::SetNode(
+	pGenNode	pNode,					//被写值节点的节点指针
+	bool		IN_isElem,				//待写入的运算数值标识
+	bool		IN_isExpressionHead,	//待写入的表达式头节点标识
+	bool		IN_isFraction,			//待写入的表达式运算数值真分数标识
+	Symbol		IN_nodeSymbol,			//待写入的运算符号枚举变量
+	ValueType	IN_value,				//代写入的运算数值
+	ValueType	IN_molecular,			//代写入的真分数分子
+	ValueType	IN_denominator,			//代写入的真分数分母
+	pGenNode	IN_nextElem,			//当前表达式中代写入的下一个数值节点指针
+	pGenNode	IN_expressionHead		//当前表达式中代写入的下一个子表达式节点指针
+)		//(真分数)设置pNode指向的结构体的值,函数成功则返回en_success;pNode值为空则输出错误信息，返回en_nullptr
+{
+	if (!pNode)
+	{
+		cout << "SetNode:pNode is nullptr!GenNode set failed" << endl;
+		return en_nullptr;
+	}
+	if (IN_molecular > IN_denominator)
+	{
+		cout << "SetNode:molecular is bigger than the denominator!Function error!" << endl;
+		return en_fail;
+	}
+
+	pNode->isElem = IN_isElem;
+	pNode->isExpressionHead = IN_isExpressionHead;
+	pNode->isFraction = IN_isFraction;
+	pNode->nodeSymbol = IN_nodeSymbol;
+	pNode->value = IN_value;
+	pNode->molecular = IN_molecular;
+	pNode->denominator = IN_denominator;
+	pNode->nextElem = IN_nextElem;
+	pNode->expressionHead = IN_expressionHead;
+	return en_success;
+}
+
 Status clExamGen::CreateBiTree(pGenNode &pFather, int times)	//以pFather为表达式节点，递归生成子试题二叉树，传参times为递归计数
 {
 	if (times < 0)	//传参判断，times<0为异常，返回错误枚举值
@@ -112,18 +148,21 @@ Status clExamGen::CreateBiTree(pGenNode &pFather, int times)	//以pFather为表�
 		return en_nullptr;
 	}
 
-	unsigned int i;
 	pGenNode pNode;								//存储当前操作的节点地址
 	pGenNode pLast;								//存储上一个操作的节点地址
 	bool nodeIsElem;							//存储当前节点的随机元素标识
+	bool nodeIsFraction;						//存储当前节点的随机真分数标识
 	Symbol nodeSymbol;							//存储当前节点的随机符号枚举变量
 	ValueType nodeValue;						//存储当前节点的随机运算数值
-	unsigned int numOfElem = maxNumOfElem;		//存储当前表达式链表中的节点数
-	
+	ValueType nodeMolecular;					//存储当前节点的真分数分子
+	ValueType nodeDenominator;					//存储当前节点的真分数分母
+	//unsigned int numOfElem = maxNumOfElem;		//存储当前表达式链表中的节点数
+	int explimit = 2;
+
 	pNode = NULL;
 	pLast = NULL;
 
-	for (i = 0; i < numOfElem; ++i)
+	while(maxNumOfElem != 0 && explimit)
 	{
 		//动态申请当前节点内存空间
 		if (en_success != GetNode(pNode))	
@@ -136,6 +175,7 @@ Status clExamGen::CreateBiTree(pGenNode &pFather, int times)	//以pFather为表�
 		if (0 == times)
 		{
 			nodeIsElem = true;
+			explimit--;
 		}
 		else
 		{
@@ -144,26 +184,16 @@ Status clExamGen::CreateBiTree(pGenNode &pFather, int times)	//以pFather为表�
 		}
 
 		//当前节点的赋值操作
-		if (nodeIsElem == true)	//当前节点为运算数值节点时，运算符号不限
-		{
-			GetRandom(nodeValue, 1, maxiumOfValue);
-			nodeSymbol = (Symbol)(rand() % 4);		//随机生成 +、-、*、/运算符号
-			SetNode(pNode,
-				true,
-				false,
-				nodeSymbol,
-				nodeValue,
-				pLast,
-				NULL);
-
-		}
-		else					//当前节点为子表达式节点时，运算符号不限
+		if (nodeIsElem == false)	//当前节点为子表达式节点时，运算符号不限
 		{
 			nodeSymbol = (Symbol)(rand() % 4);		//随机生成 +、-、*、/运算符号
 			SetNode(pNode,
 				false,
 				false,
+				false,
 				nodeSymbol,
+				0,
+				0,
 				0,
 				pLast,
 				NULL);
@@ -173,7 +203,56 @@ Status clExamGen::CreateBiTree(pGenNode &pFather, int times)	//以pFather为表�
 				return en_fail;
 			}
 		}
+		else					//当前节点为运算数值节点时，运算符号不限
+		{
+			nodeIsFraction = rand() % 2;
+			if (nodeIsFraction == true && ifFraction == true)		//真分数节点生成
+			{
+				GetRandom(nodeValue, 0, maxiumOfValue);	//真分数则真数值范围为[0,maxiumOfValue)
+				GetRandom(nodeDenominator, 2, maxiumOfDenominator);	//真分数分母取值为[2,maxiumOfMolecular)
+
+				//真分数分子取值为[1,nodeDenominator或maxiumOfMolecular的最小者)
+				GetRandom(nodeMolecular, 1, nodeDenominator > maxiumOfMolecular ? maxiumOfMolecular : nodeDenominator);
+
+				nodeSymbol = (Symbol)(rand() % 4);		//随机生成 +、-、*、/运算符号
+				SetNode(pNode,
+					true,
+					false,
+					true,
+					nodeSymbol,
+					nodeValue,
+					nodeMolecular,
+					nodeDenominator,
+					pLast,
+					NULL);
+
+			}
+			else //真值节点生成
+			{
+				GetRandom(nodeValue, 1, maxiumOfValue);	//真分数则真数值范围为[1,maxiumOfValue)
+				nodeSymbol = (Symbol)(rand() % 4);		//随机生成 +、-、*、/运算符号
+				SetNode(pNode,
+					true,
+					false,
+					false,
+					nodeSymbol,
+					nodeValue,
+					0,
+					0,
+					pLast,
+					NULL);
+			}
+		}
+
 		pLast = pNode;
+		if (0 == maxNumOfElem || 0 == explimit)
+		{
+			break;
+		}
+		else
+		{
+			maxNumOfElem--;
+		}
 	}
 	pFather->expressionHead = pNode;	//将pFather对应节点的子表达式指针指向pNode，至此pFather的子试题树生成完毕
 	pFather->expressionHead->nodeSymbol = sym_plus;	//将子表达式中头节点符号置为加号
@@ -275,12 +354,22 @@ void clExamGen::BiTreeInfoIntoString(pGenNode pFather, string &dst)	//将试题�
 	else	//节点为数值节点时显示运算数值
 	{
 		dst.insert(dst.size(), 1, ' ');
-		dst.insert(dst.size(),to_string(pFather->value));
+		if (pFather->value != 0)
+		{
+			dst.insert(dst.size(), to_string(pFather->value));
+		}
+		if (pFather->isFraction == true)
+		{
+			dst.insert(dst.size(), 1, '`');
+			dst.insert(dst.size(), to_string(pFather->molecular));
+			dst.insert(dst.size(), 1, '/');
+			dst.insert(dst.size(), to_string(pFather->denominator));
+		}
 	}
 	BiTreeInfoIntoString(pFather->nextElem, dst);
 }
 
-Status clExamGen::CreateExamToString(Level IN_lvmode, string &Out_dst)	//根据传入的试题难度自动生成试题，并将试题字符串化，复制到Out_dst的string引用对象中
+/*Status clExamGen::CreateExamToString(Level IN_lvmode, string &Out_dst)	//根据传入的试题难度自动生成试题，并将试题字符串化，复制到Out_dst的string引用对象中
 {
 	if (IN_lvmode < 0 || IN_lvmode > 4)
 	{
@@ -297,7 +386,11 @@ Status clExamGen::CreateExamToString(Level IN_lvmode, string &Out_dst)	//根据�
 
 	GetNode(genNodeRoot);	//申请根节点空间
 	SetNode(genNodeRoot, false, true, sym_plus, 0, NULL, NULL);	//根节点设置为符号为+的表达式节点
+	unsigned int tmp = maxNumOfElem;		//临时保存maxNumOfElem
 	CreateBiTree(genNodeRoot, numOfExpression);	//以genNodeRoot为根节点生成试题树
+	maxNumOfElem = tmp;	//恢复maxNumOfElem备份
+
+	//DeleteOneElemExpression(genNodeRoot, genNodeRoot->expressionHead);
 
 	//cout << "Lv: " << lvMode << endl;
 	BiTreeInfoIntoString(genNodeRoot->expressionHead, strExam);
@@ -305,20 +398,46 @@ Status clExamGen::CreateExamToString(Level IN_lvmode, string &Out_dst)	//根据�
 	//cout << Out_dst.c_str() << endl;
 	DeleteBiTree(genNodeRoot);	//试题树摧毁结束
 	strExam.erase();
-}
+}*/
 
 Status clExamGen::CreateExamToString(	
-		Level IN_lvmode,					//传入的题目生成难度，仅接受自定义难度，其他难度则报错并返回en_fail
-		string &Out_dst,					//输出的string类引用，当函数成功生成一道题目时会将其字符串化并输出至该引用对应的对象		
-		ValueType IN_maxiumOfValue,			//待生成题目的数值最大值，题目生成参数，若为50,则运算数值范围为[1,50)
-		unsigned int IN_numOfElem,			//待生成题目中一个表达式中运算值及子表达式的最大个数
-		unsigned int IN_numOfExpression		//待生成题目中的括号嵌套层数
+	Level IN_lvmode,						//传入的题目生成难度，仅接受自定义难度，其他难度则报错并返回en_fail
+	string &Out_dst,						//输出的string类引用，当函数成功生成一道题目时会将其字符串化并输出至该引用对应的对象				
+	ValueType IN_maxiumOfValue,				//待生成题目的数值最大值，题目生成参数，若为50,则运算数值范围为[1,50)
+	ValueType IN_maxiumOfMolecular,			//待生成题目的真分数分子最大值
+	ValueType IN_maxiumOfDenominator,		//待生成题目的真分数分母最大值
+	unsigned int IN_numOfElem,				//待生成题目中一个表达式中运算值及子表达式的最大个数
+	unsigned int IN_numOfExpression			//待生成题目中的括号嵌套层数
 )	//(用户自定义难度)根据传入的试题参数自动生成试题，并将试题字符串化，复制到Out_dst的string引用对象中
 {
 	if (IN_lvmode != lv_UserDefine || IN_maxiumOfValue < 0 || IN_numOfElem < 0 || IN_numOfExpression < 0)
 	{
 		cout << "CreateExamToString:Input is illegal!" << endl;
 		return en_fail;
+	}
+	if (IN_maxiumOfDenominator < IN_maxiumOfMolecular)
+	{
+		cout << "CreateExamToString:maxiumOfMolecular is greater than the maxiumOfDenominator!" << endl;
+		return en_fail;
+	}
+
+	if (0 == IN_maxiumOfDenominator && 0 == IN_maxiumOfDenominator)	//分子与分母最大值均为0则不生成含真分数的式子
+	{
+		ifFraction = false;
+	}
+	else if(IN_maxiumOfDenominator < 2)
+	{
+		cout << "CreateExamToString:maxiumOfDenominator shouldn't less than 2!" << endl;
+		return en_fail;
+	}
+	else if (IN_maxiumOfMolecular < 1)
+	{
+		cout << "CreateExamToString:maxiumOfMolecular shouldn't less than 1!" << endl;
+		return en_fail;
+	}
+	else
+	{
+		ifFraction = true;
 	}
 	random_device rd;
 	srand(rd());
@@ -329,11 +448,18 @@ Status clExamGen::CreateExamToString(
 	//自定义难度下试题类的参数配置
 	maxiumOfValue = IN_maxiumOfValue;
 	maxNumOfElem = IN_numOfElem;		
+	maxiumOfDenominator = IN_maxiumOfDenominator;
+	maxiumOfMolecular = IN_maxiumOfMolecular;
 	numOfExpression = IN_numOfExpression;
 
 	GetNode(genNodeRoot);	//申请根节点空间
-	SetNode(genNodeRoot, false, true, sym_plus, 0, NULL, NULL);	//根节点设置为符号为+的表达式节点
+	SetNode(genNodeRoot, false, true, false, sym_plus, 0, 0, 0, NULL, NULL);	//根节点设置为符号为+的表达式节点
+
+	unsigned int tmp = maxNumOfElem;		//临时保存maxNumOfElem
 	CreateBiTree(genNodeRoot, numOfExpression);	//以genNodeRoot为根节点生成试题树
+	maxNumOfElem = tmp;	//恢复maxNumOfElem备份
+
+	DeleteOneElemExpression(genNodeRoot, genNodeRoot->expressionHead);
 
 	//cout << "Lv: " << lvMode << endl;
 	BiTreeInfoIntoString(genNodeRoot->expressionHead, strExam);
@@ -341,4 +467,55 @@ Status clExamGen::CreateExamToString(
 	//cout << Out_dst.c_str() << endl;
 	DeleteBiTree(genNodeRoot);	//试题树摧毁结束
 	strExam.erase();
+}
+
+Status clExamGen::DeleteOneElemExpression(pGenNode pLast, pGenNode pNode)	//对于仅含有一个元素的表达式时，进行表达式节点删除操作，类似单链表的中间节点删除
+{
+	if (!pNode)
+	{
+		return en_success;
+	}
+
+	if (pLast->isElem == false)
+	{
+		if (pNode->isExpressionHead == true && pNode->isElem == false && pNode->expressionHead && pNode->expressionHead->nextElem == NULL)
+		{
+			pLast->expressionHead = pNode->expressionHead;
+			pLast->expressionHead->nextElem = pNode->nextElem;
+			free(pNode);
+			pNode = pLast->expressionHead;
+		}
+	}
+	else if (pLast->isElem == true)
+	{
+		if (pNode->isElem == false && pNode->expressionHead && pNode->expressionHead->nextElem == NULL)
+		{
+			pLast->nextElem = pNode->expressionHead;
+			pLast->nextElem->nextElem = pNode->nextElem;
+			free(pNode);
+			pNode = pLast->nextElem;
+		}
+	}
+
+	if (pNode->expressionHead)
+	{
+		DeleteOneElemExpression(pNode, pNode->expressionHead);
+	}
+
+	if (pNode->nextElem)
+	{
+		DeleteOneElemExpression(pNode, pNode->nextElem);
+	}
+
+
+
+
+	/*if (pNode->isElem == false && pNode->isExpressionHead == true && pNode->nextElem == NULL)
+	{
+		pNode->nextElem = pNode->expressionHead->nextElem;
+		pNode->expressionHead->nextElem = pNode->expressionHead->nextElem->nextElem;
+		pNode->nextElem->nextElem = NULL;
+	}*/
+
+	return en_success;
 }

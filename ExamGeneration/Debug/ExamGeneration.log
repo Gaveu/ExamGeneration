@@ -1,6 +1,2 @@
-﻿  ExamGen.cpp
-  main.cpp
-  Generating Code...
-i:\han\code\examgeneration\examgeneration\examgen.cpp(344): warning C4715: 'clExamGen::CreateExamToString': not all control paths return a value
-i:\han\code\examgeneration\examgeneration\examgen.cpp(308): warning C4715: 'clExamGen::CreateExamToString': not all control paths return a value
+﻿  main.cpp
   ExamGeneration.vcxproj -> I:\han\Code\ExamGeneration\Debug\ExamGeneration.exe
