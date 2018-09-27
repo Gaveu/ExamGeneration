@@ -68,6 +68,7 @@ void opt_handler::opt_handler_process()
 		return;
 	}
 	bool is_judge = false;
+	bool is_generate = false;
 	for (int pos = 0; pos < this->argc; pos++)
 	{
 		if (!strncmp(this->argv[pos], "-h", 2))
@@ -81,6 +82,7 @@ void opt_handler::opt_handler_process()
 				this->problem_num = this->to_num(this->argv[pos + 1]);
 			else
 				this->problem_num = 10;
+			is_generate = true;
 			continue;
 		}
 		else if (!strncmp(this->argv[pos], "-r", 2))//题目数值范围
@@ -89,6 +91,7 @@ void opt_handler::opt_handler_process()
 				this->problem_size = this->to_num(this->argv[pos + 1]);
 			else
 				this->problem_size = 10;
+			is_generate = true;
 			continue;
 		}
 		else if (!strncmp(this->argv[pos], "-e", 2))//题目文本文件
@@ -103,10 +106,12 @@ void opt_handler::opt_handler_process()
 			continue;
 		}
 	}
-	if (this->problem_num != 0)
+	if (is_generate)
 		this->generate_problems();
-	if (is_judge)
+	else if (is_judge)
 		this->compare();
+	else
+		help();
 }
 
 void opt_handler::generate_problems()
