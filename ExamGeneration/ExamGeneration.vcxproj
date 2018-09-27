@@ -116,6 +116,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="ExamGen.h" />
+    <ClInclude Include="node.h" />
+    <ClInclude Include="opt_handler.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ExamGen.cpp" />

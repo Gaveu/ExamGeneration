@@ -65,6 +65,7 @@ public:
 
 	char SymbolToChar(Symbol IN_symbol);	//根据传入的IN_symbol输出对应符号的ASCII
 	Status GetRandom(ValueType &Data, ValueType IN_Minima, ValueType IN_Maxima);	//获取[Minima,Maxima)的随机数,将该数传给Data
+	Status GetRandom1(ValueType &Data, ValueType IN_Minima, ValueType IN_Maxima);	//获取[Minima,Maxima]的随机数,将该数传给Data
 	Status SetLevel(Level IN_level);		//根据传入的IN_level设置类内参数lvMode、maxNumOfElem、numOfExpression、maxiumOfValue
 	Status GetNode(pGenNode &pNode);		//动态申请GenNode大小的内存，成功则将该内存地址返回给pNode并返回en_success;否则输出错误信息并返回en_fail
 	Status SetNode(
@@ -100,11 +101,21 @@ public:
 		ValueType IN_maxiumOfDenominator,		//待生成题目的真分数分母最大值
 		unsigned int IN_numOfElem,				//待生成题目中一个表达式中运算值及子表达式的最大个数
 		unsigned int IN_numOfExpression			//待生成题目中的括号嵌套层数
-);	//(用户自定义难度)根据传入的试题参数自动生成试题，并将试题字符串化，复制到Out_dst的string引用对象中,返回值为Status状态枚举值
-	
+	);	//(用户自定义难度)根据传入的试题参数自动生成试题，并将试题字符串化，复制到Out_dst的string引用对象中,返回值为Status状态枚举值
+	Status CreateExamToString1(
+		Level IN_lvmode,						//传入的题目生成难度，仅接受自定义难度，其他难度则报错并返回en_fail
+		string &Out_dstCout,					//(无分数转换)输出的string类引用，当函数成功生成一道题目时会将其字符串化并输出至该引用对应的对象		
+		string &Out_dstCal,						//(有分数转换)输出的string类引用，当函数成功生成一道题目时会将其字符串化并输出至该引用对应的对象	
+		ValueType IN_maxiumOfValue,				//待生成题目的数值最大值，题目生成参数，若为50,则运算数值范围为[1,50)
+		ValueType IN_maxiumOfMolecular,			//待生成题目的真分数分子最大值
+		ValueType IN_maxiumOfDenominator,		//待生成题目的真分数分母最大值
+		unsigned int IN_numOfElem,				//待生成题目中一个表达式中运算值及子表达式的最大个数
+		unsigned int IN_numOfExpression			//待生成题目中的括号嵌套层数
+	);	//(用户自定义难度)(真分数转换)根据传入的试题参数自动生成试题，并将试题字符串化，复制到Out_dst的string引用对象中,返回值为Status状态枚举值
 	Status DeleteOneElemExpression(pGenNode pLast, pGenNode pNode);	//对于仅含有一个元素的表达式时，进行表达式节点删除操作，类似单链表的中间节点删除
 
 	void BiTreeInfoIntoString(pGenNode pFather, string &dst);	//将试题的信息输入至dst对应字符串中
+	void BiTreeInfoIntoString1(pGenNode pFather, string &dst);	//(真分数转换)将试题的信息输入至dst对应字符串中
 	void ShowTree(pGenNode pFather);		//递归输出试题树的信息
 
 
