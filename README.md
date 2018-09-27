@@ -10,13 +10,18 @@
 
 基本实现了题目生成、计算、问题与答案本地文件存储、对错判断的功能。目前正在测试与误操作方面进行处理打磨。
 
--修复了漏显第一题的bug。
+- 修复了漏显第一题的bug。
 
+- 修复了`-n` `-r`单独使用时报错的bug，添加了部分默认规则。`-n` 下默认生成数值10以内的题目,`-r`默认生成10道题目。
 
 
 ## 功能
 
-ExamGeneration.exe -n 10 -r 50	//生成十道数值为50以内的题目，题目与答案存放在程序同目录下的Exercises.txt文件与Answers.txt文件中
+ExamGeneration.exe -n 20 		//生成20道数值为10以内的题目，题目与答案存放在程序同目录下的Exercises.txt文件与Answers.txt文件中
+
+ExamGeneration.exe -r 50			//生成10道数值为50以内的题目，题目与答案存放在程序同目录下的Exercises.txt文件与Answers.txt文件中
+
+ExamGeneration.exe -n 10 -r 50	//生成10道数值为50以内的题目，题目与答案存放在程序同目录下的Exercises.txt文件与Answers.txt文件中
 
 ExamGeneration.exe -e Exercises.txt -a Answers.txt	//根据Exercises.txt中的题目，验证Answers.txt中的答案，分别列出正确与错误的题目数目和标号
 

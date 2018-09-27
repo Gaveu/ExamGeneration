@@ -7,6 +7,7 @@
 #include<string.h>
 #include<string>
 #include<stdio.h>
+#include<ctype.h>
 #include"node.h"
 #include"ExamGen.h"
 using std::string;
@@ -17,12 +18,11 @@ class opt_handler
 public:
 	int argc = 0;
 	char** argv = 0;
-	unsigned int problem_num = 0;
-	unsigned int problem_size = 0;
+	unsigned int problem_num = 10;
+	unsigned int problem_size = 10;
 	string exercisefile = "./Exercises.txt";
 	string answerfile = "./Answers.txt";
 	opt_handler(int argc, char** argv);
-	bool opt_judge();
 	void help();
 	unsigned int to_num(char* in);
 	void opt_handler_process();
@@ -77,12 +77,18 @@ void opt_handler::opt_handler_process()
 		}
 		if (!strncmp(this->argv[pos], "-n", 2))//生成题目个数
 		{
-			this->problem_num = this->to_num(this->argv[pos + 1]);
+			if (this->argc - 1 > pos &&  isdigit(this->argv[pos + 1][0]))
+				this->problem_num = this->to_num(this->argv[pos + 1]);
+			else
+				this->problem_num = 10;
 			continue;
 		}
 		else if (!strncmp(this->argv[pos], "-r", 2))//题目数值范围
 		{
-			this->problem_size = this->to_num(this->argv[pos + 1]);
+			if (this->argc - 1 > pos && isdigit(this->argv[pos + 1][0]))
+				this->problem_size = this->to_num(this->argv[pos + 1]);
+			else
+				this->problem_size = 10;
 			continue;
 		}
 		else if (!strncmp(this->argv[pos], "-e", 2))//题目文本文件
@@ -109,12 +115,17 @@ void opt_handler::generate_problems()
 	caculator* q = new caculator();
 	ofstream Answer_File;
 	ofstream Exercise_File;
-	Answer_File.open(this->answerfile, ios::out | ios::trunc);
-	Exercise_File.open(this->exercisefile, ios::out | ios::trunc);
+	Answer_File.open(this->answerfile, ios::out | ios::trunc);//创建答案文件
+	Exercise_File.open(this->exercisefile, ios::out | ios::trunc);//创建题目文件
+	if (!Answer_File.is_open() || !Exercise_File.is_open())
+	{
+		cout << "文件创建失败";
+		return;
+	}
 	string sCout;
 	string sCal;
 	int lv = lv_UserDefine;
-	for (unsigned int x = 1; x < this->problem_num + 1; x++)
+	for (unsigned int x = 1; x < this->problem_num + 1; x++)//题目生成
 	{
 		p->CreateExamToString1(lv_UserDefine, sCout, sCal, this->problem_size, this->problem_size, this->problem_size, 3, 1);
 		q->start_process(sCal);
@@ -137,11 +148,16 @@ void opt_handler::compare()
 	caculator* q = new caculator();
 	ifstream AnswerFile;
 	ifstream ExerciseFile;
-	AnswerFile.open(this->answerfile);
-	ExerciseFile.open(this->exercisefile);
+	AnswerFile.open(this->answerfile);//打开答案文件
+	ExerciseFile.open(this->exercisefile);//打开题目文件
+	if (!AnswerFile.is_open() || !ExerciseFile.is_open())
+	{
+		cout << "文件不存在";
+		return;
+	}
 	string ans, exe;
 	unsigned int current_problem_num = 0;
-	while (!AnswerFile.eof() && !ExerciseFile.eof())
+	while (!AnswerFile.eof() && !ExerciseFile.eof())//读取文件内容
 	{
 
 		current_problem_num++;
@@ -155,16 +171,26 @@ void opt_handler::compare()
 		pos = exe.find('.');
 		exe = exe.substr(pos + 1);
 		q->start_process(exe);
-		ans._Equal(q->final_result) ? correct.push_back(current_problem_num) : error.push_back(current_problem_num);
+		ans._Equal(q->final_result) ? correct.push_back(current_problem_num) : error.push_back(current_problem_num);//结果判定
 	}
 	cout << "Correct: " << correct.size() << " (";
-	for (auto x : correct)
-		cout << " " << x << ",";
+	for (unsigned int x = 0; x < correct.size(); x++)
+	{
+		if (x == 0)
+			cout << " " << correct[x];
+		else
+			cout << ", " << correct[x];
+	}
 	cout << " )" << endl;
 
 	cout << "Error: " << error.size() << " (";
-	for (auto x : error)
-		cout << " " << x << ",";
+	for (unsigned int x = 0; x < error.size(); x++)
+	{
+		if (x == 0)
+			cout << " " << error[x];
+		else
+			cout << ", " << error[x];
+	};
 	cout << " )" << endl;
 	delete q;
 	return;
