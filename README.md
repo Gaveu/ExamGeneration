@@ -92,22 +92,27 @@ Chernobyl：
 | · Postmortem & Process Improvement Plan | · 事后总结, 并提出过程改进计划          | 20                   | 30                   |
 | 合计                                    |                                         | 480                  | 560                  |
 
+
+
 -Gaveu：
+
 | **PSP2.1**                              | **Personal Software Process Stages**    | **预估耗时（分钟）** | **实际耗时（分钟）** |
 | --------------------------------------- | --------------------------------------- | -------------------- | -------------------- |
 | Planning                                | 计划                                    | 30                   | 30                   |
 | · Estimate                              | · 估计这个任务需要多少时间              | 600                  | 540                  |
 | Development                             | 开发                                    | 350                  | 240                  |
-| · Analysis                              | · 需求分析 (包括学习新技术)             | 20                   | 20                   |
+| · Analysis                              | · 需求分析 (包括学习新技术)             | 20                   | 10                   |
 | · Design Spec                           | · 生成设计文档                          | 30                   | 50                   |
 | · Design Review                         | · 设计复审 (和同事审核设计文档)         | 30                   | 20                   |
 | · Coding Standard                       | · 代码规范 (为目前的开发制定合适的规范) | 0                    | 10                   |
 | · Design                                | · 具体设计                              | 60                   | 80                   |
 | · Coding                                | · 具体编码                              | 200                  | 160                  |
 | · Code Review                           | · 代码复审                              | 30                   | 60                   |
-| · Test                                  | · 测试（自我测试，修改代码，提交修改）  | 30                   | 60                   |
+| · Test                                  | · 测试（自我测试，修改代码，提交修改）  | 30                   | 40                   |
 | Reporting                               | 报告                                    | 60                   | 20                   |
 | · Test Report                           | · 测试报告                              | 30                   | 20                   |
 | · Size Measurement                      | · 计算工作量                            | 10                   | 10                   |
 | · Postmortem & Process Improvement Plan | · 事后总结, 并提出过程改进计划          | 20                   | 30                   |
 | 合计                                    |                                         | 900                  | 780                  |
+
+
