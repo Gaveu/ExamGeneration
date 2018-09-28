@@ -118,10 +118,12 @@
     <ClInclude Include="ExamGen.h" />
     <ClInclude Include="node.h" />
     <ClInclude Include="opt_handler.h" />
+    <ClInclude Include="StrRepeatCheck.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ExamGen.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="StrRepeatCheck.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

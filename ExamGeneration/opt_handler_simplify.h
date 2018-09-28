@@ -134,7 +134,7 @@ void opt_handler::generate_problems()
 	{
 		p->CreateExamToString1(lv_UserDefine, sCout, sCal, this->problem_size, this->problem_size, this->problem_size, 3, 1);
 		q->start_process(sCal);
-		if (q->result->re_granted)
+		if (q->result->re_granted || !r->StrCheckAndAdd(q->final_result,x) )
 		{
 			x--;
 			continue;
