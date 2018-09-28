@@ -115,7 +115,7 @@ public:
 	Status DeleteOneElemExpression(pGenNode pLast, pGenNode pNode);	//对于仅含有一个元素的表达式时，进行表达式节点删除操作，类似单链表的中间节点删除
 
 	void BiTreeInfoIntoString(pGenNode pFather, string &dst);	//将试题的信息输入至dst对应字符串中
-	void BiTreeInfoIntoString1(pGenNode pFather, string &dst);	//(真分数转换)将试题的信息输入至dst对应字符串中
+	void BiTreeInfoIntoString1(pGenNode pFather, string &dstCal, string &dstCout);	//将试题的信息输入至dstCal(真分数转换)、dstCout(无真分数转换)对应字符串中
 	void ShowTree(pGenNode pFather);		//递归输出试题树的信息
 
 

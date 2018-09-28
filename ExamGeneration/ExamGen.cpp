@@ -58,14 +58,14 @@ Status clExamGen::SetLevel(Level IN_level)		//根据传入的IN_level设置类�
 
 	case lv_UserDefine:	//用户自定义模式，由于正常执行用户自定义模式的流程时并不会触发该函数，运行到这里可认为是误操作，输出错误信息并结束该函数的执行
 	{
-		cout << "SetLevel:Input Error!"<<endl;
+		cout << "SetLevel:Input Error!" << endl;
 		cout << "If you want to using UserDefine mode ,please running the other same name function!" << endl;
 		return en_fail;
 	}break;
 
 	default:
 	{
-		cout<<"SetLevel:Level set failed,the input is illegal!"<<endl;
+		cout << "SetLevel:Level set failed,the input is illegal!" << endl;
 		return en_fail;
 	}
 	}
@@ -94,7 +94,7 @@ Status clExamGen::SetNode(				//设置pNode指向的结构体的值,函数成功
 	ValueType	IN_value,				//代写入的运算数值
 	pGenNode	IN_nextElem,			//当前表达式中代写入的下一个数值节点指针
 	pGenNode	IN_expressionHead		//当前表达式中代写入的下一个子表达式节点指针
-)		
+)
 {
 	if (!pNode)
 	{
@@ -174,10 +174,10 @@ Status clExamGen::CreateBiTree(pGenNode &pFather, int times)	//以pFather为表�
 	pNode = NULL;
 	pLast = NULL;
 
-	while(maxNumOfElem != 0 && explimit)
+	while (maxNumOfElem != 0 && explimit)
 	{
 		//动态申请当前节点内存空间
-		if (en_success != GetNode(pNode))	
+		if (en_success != GetNode(pNode))
 		{
 			cout << "CreateBiTree:GetNode failed!" << endl;
 			return en_fail;
@@ -319,26 +319,26 @@ char clExamGen::SymbolToChar(Symbol IN_symbol)	//根据传入的IN_symbol输出�
 {
 	switch (IN_symbol)
 	{
-		case sym_plus:
-		{
-			return '+';
-		}break;
-		case sym_minus:
-		{
-			return '-';
-		}break;
-		case sym_multiply:
-		{
-			return '*';
-		}break;
-		case sym_divide:
-		{
-			return '/';
-		}break;
-		default:
-		{
-			return '\0';
-		}
+	case sym_plus:
+	{
+		return '+';
+	}break;
+	case sym_minus:
+	{
+		return '-';
+	}break;
+	case sym_multiply:
+	{
+		return '*';
+	}break;
+	case sym_divide:
+	{
+		return '/';
+	}break;
+	default:
+	{
+		return '\0';
+	}
 	}
 }
 
@@ -384,7 +384,7 @@ void clExamGen::BiTreeInfoIntoString(pGenNode pFather, string &dst)	//将试题�
 	BiTreeInfoIntoString(pFather->nextElem, dst);
 }
 
-void clExamGen::BiTreeInfoIntoString1(pGenNode pFather, string &dst)	//(真分数转换)将试题的信息输入至dst对应字符串中
+void clExamGen::BiTreeInfoIntoString1(pGenNode pFather, string &dstCal, string &dstCout)	//(真分数转换)将试题的信息输入至dst对应字符串中
 {
 	if (!pFather)
 	{
@@ -394,32 +394,49 @@ void clExamGen::BiTreeInfoIntoString1(pGenNode pFather, string &dst)	//(真分�
 	//运算符号显示环节
 	if (pFather->isExpressionHead == false)	//非表达式的头节点则显示运算符号
 	{
-		dst.insert(dst.size(), 1, ' ');
-		dst.insert(dst.size(), 1, SymbolToChar(pFather->nodeSymbol));
+		dstCal.insert(dstCal.size(), 1, ' ');
+		dstCal.insert(dstCal.size(), 1, SymbolToChar(pFather->nodeSymbol));
+
+		dstCout.insert(dstCout.size(), 1, ' ');
+		dstCout.insert(dstCout.size(), 1, SymbolToChar(pFather->nodeSymbol));
 	}
 
 	//运算数值或表达式输出环节
 	if (pFather->isElem == false)	//节点为表达式节点则显示“ ( 表达式 )”
 	{
-		dst.insert(dst.size(), " (");
-		BiTreeInfoIntoString1(pFather->expressionHead, dst);
-		dst.insert(dst.size(), " )");
+		dstCal.insert(dstCal.size(), " (");
+		dstCout.insert(dstCout.size(), " (");
+		BiTreeInfoIntoString1(pFather->expressionHead, dstCal, dstCout);
+		dstCal.insert(dstCal.size(), " )");
+		dstCout.insert(dstCout.size(), " )");
 	}
 	else	//节点为数值节点时显示运算数值
 	{
-		dst.insert(dst.size(), 1, ' ');
+		dstCal.insert(dstCal.size(), 1, ' ');
+		dstCout.insert(dstCout.size(), 1, ' ');
 		if (pFather->isFraction == true)
 		{
-			dst.insert(dst.size(), to_string(pFather->molecular + pFather->value * pFather->denominator));
-			dst.insert(dst.size(), 1, '/');
-			dst.insert(dst.size(), to_string(pFather->denominator));
+			dstCal.insert(dstCal.size(), to_string(pFather->molecular + pFather->value * pFather->denominator));
+			dstCal.insert(dstCal.size(), 1, '/');
+			dstCal.insert(dstCal.size(), to_string(pFather->denominator));
+
+			if (pFather->value != 0)
+			{
+				dstCout.insert(dstCout.size(), to_string(pFather->value));
+				dstCout.insert(dstCout.size(), 1, '`');
+			}
+			dstCout.insert(dstCout.size(), to_string(pFather->molecular));
+			dstCout.insert(dstCout.size(), 1, '/');
+			dstCout.insert(dstCout.size(), to_string(pFather->denominator));
+
 		}
 		else
 		{
-			dst.insert(dst.size(), to_string(pFather->value));
+			dstCal.insert(dstCal.size(), to_string(pFather->value));
+			dstCout.insert(dstCout.size(), to_string(pFather->value));
 		}
 	}
-	BiTreeInfoIntoString1(pFather->nextElem, dst);
+	BiTreeInfoIntoString1(pFather->nextElem, dstCal, dstCout);
 }
 
 /*Status clExamGen::CreateExamToString(Level IN_lvmode, string &Out_dst)	//根据传入的试题难度自动生成试题，并将试题字符串化，复制到Out_dst的string引用对象中
@@ -435,7 +452,7 @@ void clExamGen::BiTreeInfoIntoString1(pGenNode pFather, string &dst)	//(真分�
 	{
 		cout << "SetLevel failed!" << endl;
 		return en_false;
-	}		
+	}
 
 	GetNode(genNodeRoot);	//申请根节点空间
 	SetNode(genNodeRoot, false, true, sym_plus, 0, NULL, NULL);	//根节点设置为符号为+的表达式节点
@@ -453,7 +470,7 @@ void clExamGen::BiTreeInfoIntoString1(pGenNode pFather, string &dst)	//(真分�
 	strExam.erase();
 }*/
 
-Status clExamGen::CreateExamToString(	
+Status clExamGen::CreateExamToString(
 	Level IN_lvmode,						//传入的题目生成难度，仅接受自定义难度，其他难度则报错并返回en_fail
 	string &Out_dst,						//输出的string类引用，当函数成功生成一道题目时会将其字符串化并输出至该引用对应的对象				
 	ValueType IN_maxiumOfValue,				//待生成题目的数值最大值，题目生成参数，若为50,则运算数值范围为[1,50)
@@ -478,7 +495,7 @@ Status clExamGen::CreateExamToString(
 	{
 		ifFraction = false;
 	}
-	else if(IN_maxiumOfDenominator < 2)
+	else if (IN_maxiumOfDenominator < 2)
 	{
 		cout << "CreateExamToString:maxiumOfDenominator shouldn't < 2!" << endl;
 		return en_fail;
@@ -500,7 +517,7 @@ Status clExamGen::CreateExamToString(
 
 	//自定义难度下试题类的参数配置
 	maxiumOfValue = IN_maxiumOfValue;
-	maxNumOfElem = IN_numOfElem;		
+	maxNumOfElem = IN_numOfElem;
 	maxiumOfDenominator = IN_maxiumOfDenominator;
 	maxiumOfMolecular = IN_maxiumOfMolecular;
 	numOfExpression = IN_numOfExpression;
@@ -616,6 +633,9 @@ Status clExamGen::CreateExamToString1(
 	random_device rd;
 	srand(rd());
 
+	string sCout;
+	string sCal;
+
 	//SetLevel(IN_lvmode);		//设置难度等级
 
 
@@ -635,14 +655,10 @@ Status clExamGen::CreateExamToString1(
 
 	DeleteOneElemExpression(genNodeRoot, genNodeRoot->expressionHead);
 
-	BiTreeInfoIntoString(genNodeRoot->expressionHead, strExam);
-	Out_dstCout = strExam;
-	strExam.erase();
+	BiTreeInfoIntoString1(genNodeRoot->expressionHead, sCal, sCout);
+	Out_dstCal = sCal;
+	Out_dstCout = sCout;
 
-	//cout << "Lv: " << lvMode << endl;
-	BiTreeInfoIntoString1(genNodeRoot->expressionHead, strExam);
-	Out_dstCal = strExam;
-	strExam.erase();
 
 	//cout << Out_dst.c_str() << endl;
 	DeleteBiTree(genNodeRoot);	//试题树摧毁结束
