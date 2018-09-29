@@ -144,7 +144,7 @@ Chernobyl：
 
 #### 流程
 
-![CalculateModulePic01.jpg](picture\CalculateModulePic01.jpg)
+![CalculateModulePic01.jpg](https://github.com/Gaveu/ExamGeneration/blob/master/blog/picture/CalculateModulePic01.jpg)
 
 
 
