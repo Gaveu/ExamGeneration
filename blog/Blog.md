@@ -776,7 +776,7 @@ typedef struct GenNode
 
 示例图：
 
-![picture01](C:/Users/ComputerHan/Desktop/%E8%BD%AF%E5%B7%A5/%E7%BB%93%E5%AF%B9%E9%A1%B9%E7%9B%AE/blog/picture/picture01.png)
+![picture01](https://github.com/Gaveu/ExamGeneration/blob/master/blog/picture/picture01.png)
 
 - 题目随机生成类`clExamGen`定义：
 
@@ -858,7 +858,7 @@ public:
 
 深度优先，随机生成运算符号与数值，流程可见流程图：
 
-![picture02](C:/Users/ComputerHan/Desktop/%E8%BD%AF%E5%B7%A5/%E7%BB%93%E5%AF%B9%E9%A1%B9%E7%9B%AE/blog/picture/picture02.png)
+![picture02](https://github.com/Gaveu/ExamGeneration/blob/master/blog/picture/picture02.png)
 
 具体实现代码：
 
@@ -1122,44 +1122,44 @@ int clStrRepeatCheck::isInMap(string &s)
 
 * 分别测试生成10到数值范围为10的题目、生成10到数值范围为20的题目、生成20到数值范围为20的题目：
 
-  ![TestPic01](picture\TestPic01.png)
+  ![TestPic01](https://github.com/Gaveu/ExamGeneration/blob/master/blog/picture/TestPic01.png)
 
 
 
 此时程序同目录下存有了试题文件Exercises.txt、答案文件Answers.txt，且答案题目均无重复：
 
-  ![TestPic01-1](picture\TestPic01-1.png)
+  ![TestPic01-1](https://github.com/Gaveu/ExamGeneration/blob/master/blog/picture/TestPic01-1.png)
 
-  ![TestPic02](picture\TestPic03.png)
+  ![TestPic02](https://github.com/Gaveu/ExamGeneration/blob/master/blog/picture/TestPic03.png)
 
-  ![TestPic02](picture\TestPic02.png)
+  ![TestPic02](https://github.com/Gaveu/ExamGeneration/blob/master/blog/picture/TestPic02.png)
 
 
 
 - 组合`-a` `-e`进行答案验证：
 
-  ![TestPic04](picture\TestPic04.png)
+  ![TestPic04](https://github.com/Gaveu/ExamGeneration/blob/master/blog/picture/TestPic04.png)
 
 修改Answer.txt中的第4题和第19题答案为0并保存修改：
 
-  ![TestPic05](picture\TestPic05.png)
+  ![TestPic05](https://github.com/Gaveu/ExamGeneration/blob/master/blog/picture/TestPic05.png)
 
 再次校验，结果显示第4题和第19题答案错误，符合预期：
 
-  ![TestPic06](picture\TestPic06.png)
+  ![TestPic06](https://github.com/Gaveu/ExamGeneration/blob/master/blog/picture/TestPic06.png)
 
 - 10000道运算数值范围为20的题目生成测试：
 
-  ![TestPic07](picture\TestPic07.png)
+  ![TestPic07](https://github.com/Gaveu/ExamGeneration/blob/master/blog/picture/TestPic07.png)
 
-  ![TestPic08](picture\TestPic08.png)
+  ![TestPic08](https://github.com/Gaveu/ExamGeneration/blob/master/blog/picture/TestPic08.png)
 
 
 本地Answers.txt与Exercises.txt头与末尾，符合需求:
 
-  ![TestPic09](picture\TestPic09.png)
+  ![TestPic09](https://github.com/Gaveu/ExamGeneration/blob/master/blog/picture/TestPic09.png)
 
-  ![TestPic10](picture\TestPic10.png)
+  ![TestPic10](https://github.com/Gaveu/ExamGeneration/blob/master/blog/picture/TestPic10.png)
 
 ### Chernobyl：
 
@@ -1167,11 +1167,11 @@ int clStrRepeatCheck::isInMap(string &s)
 
 - 第一次耗时17秒73：
 
-  ![TimeTest01](picture\TimeTest01.png)
+  ![TimeTest01](https://github.com/Gaveu/ExamGeneration/blob/master/blog/picture/TimeTest01.png)
 
 - 第二次耗时22秒55：
 
-  ![TimeTest02](picture\TimeTest02.png)
+  ![TimeTest02](https://github.com/Gaveu/ExamGeneration/blob/master/blog/picture/TimeTest02.png)
 
 
 
