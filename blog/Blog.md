@@ -1,7 +1,10 @@
 [TOC]
 
 # ExamGeneration
-
+[Github地址](https://github.com/Gaveu/ExamGeneration)
+[博客地址](https://www.cnblogs.com/HelloGaveu/p/9726847.html)
+[-Gaveu博客主页地址](https://www.cnblogs.com/HelloGaveu/)
+[Chernobyl博客主页地址](http://www.cnblogs.com/Chernobyl/)
 由[@Chernobyl](https://github.com/Pryriat)与[@-Gaveu](https://github.com/Gaveu)合力完成的四则运算题目与答案生成程序，难度可控，刷题体验良好。
 
 ~~妈妈再也不用担心我的学习~~
@@ -1120,7 +1123,7 @@ int clStrRepeatCheck::isInMap(string &s)
 
 ### -Gaveu：
 
-* 分别测试生成10到数值范围为10的题目、生成10到数值范围为20的题目、生成20到数值范围为20的题目：
+* 分别测试生成10道数值范围为10的题目、生成10道数值范围为20的题目、生成20道数值范围为20的题目：
 
   ![TestPic01](https://github.com/Gaveu/ExamGeneration/blob/master/blog/picture/TestPic01.png)
 
